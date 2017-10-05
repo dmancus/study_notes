@@ -59,3 +59,4 @@ CRUD is:
 Bulk copy for mongo: 
 =====================
 mongoinsert  
+test
