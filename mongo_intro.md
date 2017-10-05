@@ -1,3 +1,6 @@
+"Learning MongoDB" by Kirsten Hunter (Lynda.com)
+==================================================
+
 Download (ubuntu way)
 =====================
 # From: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/  
@@ -55,8 +58,35 @@ CRUD is:
 * find
 * update
 * remove
+* drop - drop the whole collection + indexes
 
 Bulk copy for mongo: 
 =====================
-mongoinsert  
-test
+mongoimport --collection <collection name> --db <dbname> --file <filename.json> --jsonArray
+
+Explain:
+=====================
+```
+db.xxx.find.().explain("executionStats")
+```
+
+Indexes:
+====================
+Max 64 indexes per collection  
+Unique indexes ONLY enforce at insert time, so you MUST create index before inserts (ie on empty collection)
+
+Simple Index:
+-------------
+```
+db.xxx.createIndex({key1:1})
+db.xxx.createIndex({key1:1},{unique:true})
+```
+
+Composite:
+----------
+```
+db.xxx.createIndex({key1:1,key2:1})
+```
+
+# TODO - Mongo via node.js
+==========================
