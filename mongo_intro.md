@@ -39,6 +39,21 @@ $ db.test_collection.find().count()
 $ db.test_collection.find({"key1":"val3"})  
 ```
 
+Find:
+-----
+"Projections" - only get a subset of the fields or document back (like columns in relational db)
+    - you get \_id back by default, so need id:0 to undo that:
+- .pretty -> make lots of new lines to make it more readable
+- .sort -> 1 is ascending, -1 is descending
+- .limit ie first x records only
+- .skip ie skip a bunch of records
+- Range search: instead of 1 or -1 for the search object, create an object and specify like key1:{$lte:2,$gte1}
+```
+    db.test_collection.find({}, {key1:1})
+    db.test_collection.find({}, {key1:1,_id:0})
+    db.test_collection.find({}, {key1:1,_id:0}).pretty().sort({key1:-1}).limit(2)
+```
+
 Update: 
 ---------
 ```
@@ -63,6 +78,7 @@ CRUD is:
 Bulk copy for mongo: 
 =====================
 mongoimport --collection <collection name> --db <dbname> --file <filename.json> --jsonArray
+(I guess apt put it in /usr/bin)
 
 Explain:
 =====================
@@ -82,11 +98,32 @@ db.xxx.createIndex({key1:1})
 db.xxx.createIndex({key1:1},{unique:true})
 ```
 
+Text Index:
+-----------
+Only one text index per collection is allowed! But you can make that one text index cover multiple text fields
+```
+db.xxx.createIndex({key1:"text",key2:"text"})
+
+# To search the text index:
+db.xxx.find({$text:{$search:"key1"}}).pretty()
+```
+Text searches will have a "score" for how well it matches:
+```
+db.xxx.find({$text:{$search:"key1"}},{score:{$meta:"textScore"}}).pretty().sort({score:{$meta:"textScore"}})
+```
+Regex Search:
+```
+db.xxx.find({textFieldName:{$regex:/backpack/i}},{someField:1,_id:0})
+```
+
 Composite:
 ----------
 ```
 db.xxx.createIndex({key1:1,key2:1})
 ```
+
+Query Tuning:
+=============
 
 # TODO - Mongo via node.js
 ==========================
