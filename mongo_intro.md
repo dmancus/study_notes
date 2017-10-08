@@ -1,9 +1,9 @@
-"Learning MongoDB" by Kirsten Hunter (Lynda.com)
+Notes from "Learning MongoDB" by Kirsten Hunter (Lynda.com)
 ==================================================
 
 Download (ubuntu way)
 =====================
-# From: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/  
+From: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/  
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6  
 echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list  
@@ -42,7 +42,8 @@ $ db.test_collection.find({"key1":"val3"})
 Find:
 -----
 "Projections" - only get a subset of the fields or document back (like columns in relational db)
-    - you get \_id back by default, so need id:0 to undo that:
+    
+- you get \_id back by default, so need id:0 to undo that
 - .pretty -> make lots of new lines to make it more readable
 - .sort -> 1 is ascending, -1 is descending
 - .limit ie first x records only
@@ -52,6 +53,28 @@ Find:
     db.test_collection.find({}, {key1:1})
     db.test_collection.find({}, {key1:1,_id:0})
     db.test_collection.find({}, {key1:1,_id:0}).pretty().sort({key1:-1}).limit(2)
+```
+
+findOne instead of find -> get an object back
+
+Use javascript + findOne to do joins and more advanced queries, and put it in a js object:
+```
+var moviename = "xxx"
+var movieobj = db.movies.findOne({_id:moviename})
+var personArray = db.people.find({movies:moviename})
+personArray.foreach(person){
+    movieobj.cast.push(person)
+}
+```
+
+Aggregate:
+----------
+Use $group operator for aggregation, examples:
+```
+db.tours.aggregate([$group:{_id: '$tourPackage', count: {$sum: 1}}])
+db.tours.aggregate([$group:{_id: '$tourOrganizer.organizerName', count: {$sum: 1}}])
+db.tours.aggregate([$group:{_id: '$tourOrganizer.organizerName', count: {$sum: 1}}])
+db.tours.aggregate([$group:{_id: '$tourPackage', average: {$avg: '$tourPrice'},  count: {$sum: 1}}])
 ```
 
 Update: 
@@ -127,3 +150,4 @@ Query Tuning:
 
 # TODO - Mongo via node.js
 ==========================
+Mongoose - schema for node in mongo?
